@@ -11,36 +11,44 @@ from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash
 from sqlalchemy import inspect
 
-from .models import Users, Role
+from .models import Users, Role, Post, Comment, Reply
 
-# class Administrator(ModelView):
-# 	#@login_required
-# 	def is_accessible(self):
-# 		return super().is_accessible()
+class Administrator(ModelView):
+	#@login_required
+	def is_accessible(self):
+		return super().is_accessible()
 
-# 	column_display_pk = True
-# 	column_hide_backrefs = False
-# 	column_list = []
+	column_display_pk = True
+	column_hide_backrefs = False
+	column_list = []
 
 
-# class MyAdminView(AdminIndexView):
-# 	def is_accessible(self):
-# 		print(current_user)
-# 		return (current_user.is_active and
-# 				current_user.is_authenticated and
-# 				current_user.has_roles('superuser')
-# 		)
-# 	@expose('/')
-# 	def index(self):
-# 		arg1 = 'Hello'
-# 		return self.render('adminhome.html', arg1=arg1)
+class MyAdminView(AdminIndexView):
+	# def is_accessible(self):
+	# 	print(current_user)
+	# 	return (current_user.is_active and
+	# 			current_user.is_authenticated and
+	# 			current_user.has_roles('superuser')
+	# 	)
+	@expose('/')
+	def index(self):
+		arg1 = 'Hello'
+		return self.render('adminhome.html', arg1=arg1)
 
 
 user_datastore = SQLAlchemyUserDatastore(db, Users, Role)
 
-Admin(app)
-# admin = Admin(app, name='Admin', template_mode='bootstrap3', index_view=MyAdminView()) 
-# admin.add_view(Administrator(Users, db.session))
+
+def appnamey(Daname):
+	admin = Admin(Daname, name='Admin', template_mode='bootstrap3', index_view=MyAdminView()) 
+
+	admin.add_view(Administrator(Users, db.session))
+	admin.add_view(Administrator(Role, db.session))
+	admin.add_view(Administrator(Post, db.session))
+	admin.add_view(Administrator(Comment, db.session))
+	admin.add_view(Administrator(Reply, db.session))
+
+
 
 def superuserNewDB(Daname):
 	with Daname.app_context():

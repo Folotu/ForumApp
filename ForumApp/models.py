@@ -3,14 +3,15 @@ from flask_login import UserMixin
 from sqlalchemy.sql import func
 from flask_admin import Admin 
 from flask_admin.contrib.sqla import ModelView
-from flask_security import Security, SQLAlchemyUserDatastore, \
-    RoleMixin, login_required, current_user
+from flask_security import Security, SQLAlchemyUserDatastore, RoleMixin, login_required, current_user
 from sqlalchemy import UniqueConstraint
 
 
-
-
-
+roles_users = db.Table(
+    'roles_users',
+    db.Column('users_id', db.Integer(), db.ForeignKey('users.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('role.id'))
+)
 
 
 class Users(db.Model, UserMixin):
@@ -19,7 +20,6 @@ class Users(db.Model, UserMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String(150))
     active = db.Column(db.Boolean())
-    notes = db.relationship('Note')
     roles = db.relationship('Role', secondary=roles_users,
                             backref=db.backref('users', lazy='dynamic'))
         
@@ -28,3 +28,12 @@ class Users(db.Model, UserMixin):
                             
     def __repr__(self):
             return '<User %r>' % self.username
+
+
+class Role(db.Model, RoleMixin):
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(80), unique=True)
+    description = db.Column(db.String(255))
+
+    def __str__(self):
+        return self.name

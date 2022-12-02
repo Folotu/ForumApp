@@ -7,8 +7,12 @@ from flask_security import Security, SQLAlchemyUserDatastore, RoleMixin, login_r
 from sqlalchemy import UniqueConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import backref
+# from flask_uploads import UploadSet, IMAGES
+from flask_sqlalchemy import SQLAlchemy
 
+# images = UploadSet('images', IMAGES)
 
+# Table to define many-to-many relationship between User and Role models
 roles_users = db.Table(
     'roles_users',
     db.Column('users_id', db.Integer(), db.ForeignKey('users.id')),
@@ -38,14 +42,22 @@ class Role(db.Model, RoleMixin):
     def __str__(self):
         return self.name
 
+# Category model
+class Category(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50))
+
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     author = db.relationship(Users, backref=backref("Post", cascade="all, delete"))
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=True)
+    category = db.relationship(Category, backref=db.backref("post", lazy='dynamic'))
     number_of_votes = db.Column(db.Integer())
     title = db.Column(db.String(120))
     description = db.Column(db.String(10000))
+    image_url = db.Column(db.String(200))
     created_at = db.Column(db.DateTime(timezone=True), default=func.now())
     updated_at = db.Column(db.DateTime(timezone=True), default=func.now())
 

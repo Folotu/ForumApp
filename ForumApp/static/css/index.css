@@ -1,0 +1,44 @@
+/* Use the Bootstrap theme and override some styles */
+/* @import "https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css";
+body {
+    background-color: #212121;
+    color: white;
+}
+
+.navbar {
+    background-color: transparent;
+    box-shadow: none;
+}
+
+.navbar a {
+    color: white;
+}
+
+.navbar .form-control {
+    background-color: #424242;
+    color: white;
+}
+
+.navbar .btn-outline-success {
+    color: white;
+    background-color: #0077C9;
+    border-color: #0077C9;
+}
+
+.card {
+    background-color: #424242;
+    color: white;
+}
+
+.card-img-top {
+    filter: brightness(0.5);
+}
+
+.card-title, .card-text {
+    color: white;
+}
+
+.btn-primary {
+    background-color: #0077C9;
+    border-color: #0077C9;
+} */

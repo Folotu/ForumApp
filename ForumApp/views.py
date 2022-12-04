@@ -7,39 +7,51 @@ from .models import *
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask import Flask, render_template, request, redirect, url_for
+
 views = Blueprint('views', __name__)
 
 
 
-@views.route('/admin', methods=['GET', 'POST'])
-def home():
-
-    # return redirect(url_for('admin.index'))
-    pass
-    # return render_template("base.html", current_user)
-    # return render_template("adminhome.html")
-
-
-@views.route('/')
+@views.route('/', methods=['GET','POST'])
 def index():
-    posts = Post.query.all()
-    return render_template('index.html', posts=posts)
+
+    if request.method == 'POST':
+        Cat = request.form.get('search')
+
+        cate = Category.query.filter_by(name=Cat.lower()).first()
+
+        if cate is None:
+            flash('Category does not exist', category='warning')
+            return redirect(url_for('views.index'))
+        else:
+            posts = Post.query.filter_by(category_id=cate.id).all()
+            return render_template('index.html', posts=posts)
+
+    else:
+        posts = Post.query.all()
+        return render_template('index.html', posts=posts)
 
 
-@views.route('/post/<int:post_id>', methods=['GET', 'POST'])
-def post(post_id):
+
+
+
+
+
+@views.route('/post', methods=['GET','POST'])
+@login_required
+def Createpost():
     # Handle POST request for creating a new post
     if request.method == 'POST':
         # Extract post data from the request
         title = request.form.get('title')
         description = request.form.get('description')
         category_name = request.form.get('category')
-        author_id = request.form.get('author_id')
+        author_id = current_user.id
 
         # Check if the category exists, and create it if it doesn't
         category = Category.query.filter_by(name=category_name).first()
         if category is None:
-            category = Category(name=category_name)
+            category = Category(name=category_name.lower())
             db.session.add(category)
             db.session.commit()
 
@@ -53,11 +65,28 @@ def post(post_id):
         db.session.add(post)
         db.session.commit()
 
-    # Handle GET request for viewing a post
+        flash("Post Created", category='success')
+        return redirect(url_for('views.post', post_id=post.id))
+    
     else:
-        post = Post.query.get(post_id)
-        comments = Comment.query.filter_by(post_id=post_id).all()
-        return render_template('post.html', post=post, comments=comments)
+        
+        return render_template('createPost.html', user=current_user)
+
+
+
+
+
+
+@views.route('/post/<int:post_id>', methods=['GET'])
+def post(post_id):
+    # Handle GET request for viewing a post
+
+    post = Post.query.get(post_id)
+    if not post:
+        abort(404)
+    comments = Comment.query.filter_by(post_id=post_id).all()
+    replies = Reply.query.all()
+    return render_template('post.html', post=post, comments=comments, replies=replies)
 
 
 

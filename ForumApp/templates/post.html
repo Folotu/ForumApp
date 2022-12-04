@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %} {{ post.title }}{% endblock %}
+
+<h1>{% block header %}{% endblock %}</h1>
+
+{% block body %}
+
+<!-- Define the function that will handle the recursion -->
+
+<div class="col-md-auto col-lg-auto col-sm-auto w-100">
+    <h1>{{ post.title }}</h1>
+
+    <h5>{{ post.description }} </h5>
+    <small class="card-foot"> Posted by {{ post.author.username }} </small>
+
+
+{% macro loop_replies(replies) %}
+    {% for reply in replies %}
+        <div class="card mb-12 col-md-auto col-lg-auto ">
+            <div class="card-body">
+                <h5 class="card-title">{{ reply.author.username }}</h5>
+                <p class="card-text">{{ reply.reply }}</p>
+                {% if reply.replies %}
+                    {{ loop_replies(reply.replies) }}
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endmacro %}
+
+<div class="card-columns" style="column-count: 1;">
+    {% for comment in post.Comment %}
+        <div class="card mb-12 col-md-auto col-lg-auto ">
+            <div class="card-body">
+                <h5 class="card-title">{{ comment.author.username }}</h5>
+                <p class="card-text">{{ comment.comment }}</p>
+                {% for reply in comment.Reply %}
+                    <div class="card mb-12 col-md-auto col-lg-auto ">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ reply.author.username }}</h5>
+                            <p class="card-text">{{ reply.reply }}</p>
+                            {% if reply.replies %}
+                                {{ loop_replies(reply.replies) }}
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endfor %}
+</div>
+
+</div>
+
+{% endblock %}

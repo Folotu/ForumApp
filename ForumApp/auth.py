@@ -1,12 +1,12 @@
 from flask import Flask, request, redirect, url_for, flash, Blueprint, render_template
-from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin
+from flask_login import LoginManager, login_user, logout_user, login_required, UserMixin, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from .models import *
 
 auth = Blueprint('auth', __name__)
 
 # Route to handle login
-@auth.route('/login', methods=['POST'])
+@auth.route('/login', methods=['POST', 'GET'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -18,12 +18,14 @@ def login():
                 flash('Logged in successfully!', category='success')
                 login_user(user, remember=True)
                 
-                return redirect(url_for('views.home'))
+                return redirect(url_for('views.index'))
                 
             else:
                 flash('Incorrect password, try again.', category='error')
+                return redirect(url_for('auth.login'))
         else:
             flash('Email does not exist.', category='error')
+            return redirect(url_for('auth.login'))
 
     elif request.method == 'GET':
         return render_template("login.html",user=current_user, )
@@ -34,6 +36,7 @@ def login():
 @login_required
 def logout():
   logout_user()
+  flash('Log out successfull!', category='success')
   return redirect(url_for('auth.login'))
 
 
@@ -42,7 +45,7 @@ def logout():
 def sign_up():
     if request.method == 'POST':
         email = request.form.get('email')
-        username = request.form.get('firstName')
+        username = request.form.get('username')
         password1 = request.form.get('password1')
         password2 = request.form.get('password2')
 
@@ -67,7 +70,7 @@ def sign_up():
             login_user(new_user, remember=True)
             flash('Account created!', category='success')
 
-            return redirect(url_for('views.home'))
+            return redirect(url_for('views.index'))
 
     elif request.method == 'GET':
         return render_template("sign_up.html", user=current_user)

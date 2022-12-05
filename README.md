@@ -1,0 +1,29 @@
+# ForumApp
+CSE 106 Final Project
+
+############################
+
+Start with creating virtual environment
+
+~~~
+ python -m venv venv
+~~~
+
+Then activate the virtual environment
+
+~~~
+ venv/Scripts/Activate 
+ source venv/bin/activate #mac
+~~~
+
+Then install the requirements in the virtual environment 
+
+~~~
+ pip install -r requirements.txt
+~~~
+
+Then run the main flask file
+
+~~~
+ python server.py 
+~~~

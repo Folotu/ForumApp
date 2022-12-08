@@ -109,22 +109,27 @@ def add_comment(post_id):
 
 
 @app.route('/comment/<int:comment_id>/add_reply', methods=['POST'])
+@login_required
 def add_reply(comment_id):
     # Query the post_id from the Comment model
     comment = Comment.query.get(comment_id)
     post_id = comment.post_id
-
+    print(request.form)
     reply_text = request.form['reply']
-    user_id = request.form['user_id']
-    reply_parent_id = request.form['reply_parent_id']
 
+    user_id = current_user.id 
+    reply_parent_id = request.form['reply_parent_id']
+    print(reply_parent_id)
     # Create a new reply
-    reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text, reply_parent_id=reply_parent_id)
+    if reply_parent_id != '': 
+        reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text, reply_parent_id=reply_parent_id)
+    else:
+        reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text)
 
     # Add the reply to the database
     db.session.add(reply)
     db.session.commit()
 
     # Redirect the user to the post page
-    return redirect(url_for('post', post_id=post_id))
+    return redirect(url_for('views.post', post_id=post_id))
 

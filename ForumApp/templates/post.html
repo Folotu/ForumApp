@@ -26,10 +26,19 @@
                 {% endif %}
             </div>
         </div>
-    {% endfor %} <button type="button" id="" class="btn btn-primary Nrep">
-        Add Reply
-        <textarea id="text-field-container" name="Nestreply" style="display: none;"rows="5"></textarea>
-    </button>
+    {% endfor %} 
+
+    <button type="button" id="replyNest-button" class="btn btn-primary">Add Reply</button>
+        <div id="NestrepDiv" style="display: none;">
+            <form method="POST" action="/comment/{{ comment.id }}/add_reply">
+                <textarea id="Nestreply-text" name="reply" rows="5"></textarea>
+                
+                <input type="text" name="reply_parent_id" value="" style="display: none;"> 
+                <button type="submit">Submit Reply</button>
+            </form>
+        </div>
+    
+
 {% endmacro %}
 
 <div class="card-columns" style="column-count: 1;">
@@ -52,10 +61,11 @@
 
                 <button type="button" id="reply-button" class="btn btn-primary">Add Reply</button>
                 <div id="repDiv" style="display: none;">
-                    <form method="POST" action="/comment/ {{ comment.id }} /add_reply">
-                        <textarea id="reply-text"  name="reply" rows="5"></textarea>
-                
-                        <button type="submit">Submit Comment</button>
+                    <form method="POST" action="/comment/{{ comment.id }}/add_reply">
+                        <textarea id="reply-text" name="reply" rows="5"></textarea>
+                        
+                        <input type="text" name="reply_parent_id" value="" style="display: none;"> 
+                        <button type="submit">Submit Reply</button>
                     </form>
                 
                 </div>

@@ -94,9 +94,17 @@ $("#comment-button").click(function()
 });
 
 
-$("#comment-button").click(function() 
+$("#reply-button").click(function() 
 {
    
-    $("#comDiv").toggle();
+    $("#repDiv").toggle();
+
+});
+
+
+$("#replyNest-button").click(function() 
+{
+   
+    $("#NestrepDiv").toggle();
 
 });

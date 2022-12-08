@@ -122,7 +122,8 @@ def add_reply(comment_id):
     print(reply_parent_id)
     # Create a new reply
     if reply_parent_id != '': 
-        reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text, reply_parent_id=reply_parent_id)
+        reply_parent_id = int(reply_parent_id)
+        reply = Reply(author_id=user_id, reply=reply_text, replyparent_id=reply_parent_id)
     else:
         reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text)
 

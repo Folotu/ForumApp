@@ -26,7 +26,10 @@
                 {% endif %}
             </div>
         </div>
-    {% endfor %}
+    {% endfor %} <button type="button" id="" class="btn btn-primary Nrep">
+        Add Reply
+        <textarea id="text-field-container" name="Nestreply" style="display: none;"rows="5"></textarea>
+    </button>
 {% endmacro %}
 
 <div class="card-columns" style="column-count: 1;">
@@ -45,10 +48,29 @@
                             {% endif %}
                         </div>
                     </div>
-                {% endfor %}
+                {% endfor %} 
+
+                <button type="button" id="reply-button" class="btn btn-primary">Add Reply</button>
+                <div id="repDiv" style="display: none;">
+                    <form method="POST" action="/comment/ {{ comment.id }} /add_reply">
+                        <textarea id="reply-text"  name="reply" rows="5"></textarea>
+                
+                        <button type="submit">Submit Comment</button>
+                    </form>
+                
+                </div>
             </div>
         </div>
-    {% endfor %}
+    {% endfor %}     
+                <button type="button" id="comment-button" class="btn btn-primary">Add Comment</button>
+                    <div id="comDiv" style="display: none;">
+                        <form method="POST" action="/post/{{ post.id }}/add_comment">
+                            <textarea id="comment-text"  name="comment" rows="5"></textarea>
+                    
+                            <button type="submit">Submit Comment</button>
+                    </form>
+                </div>
+     </div>
 </div>
 
 </div>

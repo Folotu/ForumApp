@@ -92,9 +92,10 @@ def post(post_id):
 
 
 @views.route('/post/<int:post_id>/add_comment', methods=['POST'])
+@login_required
 def add_comment(post_id):
     comment_text = request.form['comment']
-    user_id = request.form['user_id']
+    user_id = current_user.id 
 
     # Create a new comment
     comment = Comment(author_id=user_id, post_id=post_id, comment=comment_text)
@@ -104,7 +105,7 @@ def add_comment(post_id):
     db.session.commit()
 
     # Redirect the user to the post page
-    return redirect(url_for('post', post_id=post_id))
+    return redirect(url_for('views.post', post_id=post_id))
 
 
 @app.route('/comment/<int:comment_id>/add_reply', methods=['POST'])

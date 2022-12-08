@@ -15,7 +15,7 @@
     <small class="card-foot"> Posted by {{ post.author.username }} </small>
 
 
-{% macro loop_replies(replies) %}
+{% macro loop_replies(replies,comment) %}
     {% for reply in replies %}
         <div class="card mb-12 col-md-auto col-lg-auto ">
             <div class="card-body">
@@ -53,14 +53,14 @@
                             <h5 class="card-title">{{ reply.author.username }}</h5>
                             <p class="card-text">{{ reply.reply }}</p>
                             {% if reply.replies %}
-                                {{ loop_replies(reply.replies) }}
+                                {{ loop_replies(reply.replies, comment) }}
                             {% endif %}
                         </div>
                     </div>
                 {% endfor %} 
 
-                <button type="button" id="reply-button" class="btn btn-primary">Add Reply</button>
-                <div id="repDiv" style="display: none;">
+                <button type="button" id="" class="btn btn-primary reply">Add Reply</button>
+                <div class="repDiv" id="" style="display: none;">
                     <form method="POST" action="/comment/{{ comment.id }}/add_reply">
                         <textarea id="reply-text" name="reply" rows="5"></textarea>
                         

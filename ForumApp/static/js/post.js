@@ -94,17 +94,34 @@ $("#comment-button").click(function()
 });
 
 
-$("#reply-button").click(function() 
+// Get elements by class name
+var ReplyElements = document.getElementsByClassName('btn btn-primary reply');
+var divv = document.getElementsByClassName('repDiv');
+console.log(ReplyElements)
+// console.log(divve)
+
+// Loop through the elements
+for (var i = 0; i < ReplyElements.length; i++) 
 {
+    (function(i) 
+    {
+        ReplyElements[i].addEventListener("click", function() 
+        {
    
-    $("#repDiv").toggle();
+            if (divv[i].className.indexOf("active") > -1) {
+                // Remove the "active" class from the current element
+                divv[i].className = divv[i].className.replace("active", "");
+                divv[i].style.display = 'none';
+              } 
+              else 
+              {
+                // Add the "active" class to the current element
+                divv[i].className += " active";
+                divv[i].style.display = 'block';
+              }
 
-});
+        });
 
+    })(i)   
 
-$("#replyNest-button").click(function() 
-{
-   
-    $("#NestrepDiv").toggle();
-
-});
+}

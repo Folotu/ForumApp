@@ -104,6 +104,24 @@ def add_comment(post_id):
     return redirect(url_for('views.post', post_id=post_id))
 
 
+@views.route('/comment/<int:comment_id>/vote/<string:action>/', methods=['POST'])
+@login_required
+def add_vote(comment_id, action):
+    comment = Comment.query.get(comment_id)
+    post_id = comment.post_id
+
+    if (action == 'add'):
+        comment.number_of_votes += 1
+    elif (action == 'subtract'):
+        comment.number_of_votes -= 1
+
+    # commit vote on the comment to the database
+    db.session.commit()
+
+    # Redirect the user to the post page
+    return jsonify({'votes': comment.number_of_votes})
+
+
 @app.route('/comment/<int:comment_id>/add_reply', methods=['POST'])
 @login_required
 def add_reply(comment_id):

@@ -12,7 +12,14 @@
     <h1>{{ post.title }}</h1>
 
     <h5>{{ post.description }} </h5>
+    
+    
     <small class="card-foot"> Posted by {{ post.author.username }} </small>
+<div class="arrow-button">
+        <i class="fa fa-arrow-up">{{post.number_of_votes}}</i>
+        <i class="fa fa-arrow-down"></i>
+    </div>
+    
 
 
 {% macro loop_replies(replies, comment, repparentid) %}
@@ -21,12 +28,26 @@
             <div class="card-body">
                 <h5 class="card-title">{{ reply.author.username }}</h5>
                 <p class="card-text">{{ reply.reply }}</p>
+                <div class="arrow-button">
+                    <i class="fa fa-arrow-up"></i>
+                    {% if reply.number_of_votes >= 0 %}
+                        <i class=""> {{ reply.number_of_votes }} Upvotes </i>
+                    {% elif reply.number_of_votes < 0 %}
+                        <i class=""> {{ reply.number_of_votes }} Downvotes </i>
+                    {% endif %}
+                        <i class="fa fa-arrow-down"></i>
+                </div>
+
                 {% if reply.replies %}
                     {{ loop_replies(reply.replies, comment, reply.id) }}
                 {% endif %} 
             </div>
         </div>
+
+    
     {% endfor %} 
+
+    
 
     <button type="button" id="replyNest-button" class="btn btn-primary nestreply">Add Reply</button>
         <div class="NestrepDiv" style="display: none;">
@@ -38,8 +59,8 @@
                 <button type="submit">Submit Reply</button>
             </form>
         </div>
-    
 
+        
 {% endmacro %}
 
 <div class="card-columns" style="column-count: 1;">
@@ -53,12 +74,32 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ reply.author.username }}</h5>
                             <p class="card-text">{{ reply.reply }}</p>
+                            <div class="arrow-button">
+                                <i class="fa fa-arrow-up"></i>
+                                {% if reply.number_of_votes >= 0 %}
+                                    <i class=""> {{ reply.number_of_votes }} Upvotes </i>
+                                {% elif reply.number_of_votes < 0 %}
+                                    <i class=""> {{ reply.number_of_votes }} Downvotes </i>
+                                {% endif %}
+                                    <i class="fa fa-arrow-down"></i>
+                            </div>
+
                             {% if reply.replies %}
                                 {{ loop_replies(reply.replies, comment, reply.id) }}
                             {% endif %}
                         </div>
                     </div>
+
                 {% endfor %} 
+                    <div class="arrow-button">
+                        <i class="fa fa-arrow-up"></i>
+                            {% if comment.number_of_votes >= 0 %}
+                                <i class=""> {{ comment.number_of_votes }} Upvotes </i>
+                            {% elif comment.number_of_votes < 0 %}
+                                <i class=""> {{ comment.number_of_votes }} Downvotes </i>
+                            {% endif %}
+                        <i class="fa fa-arrow-down"></i>
+                    </div>
 
                 <button type="button" id="" class="btn btn-primary reply">Add Reply</button>
                 <div class="repDiv" id="" style="display: none;">

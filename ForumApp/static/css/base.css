@@ -49,3 +49,15 @@ body {
     .text-field-container {
         word-wrap: break-word;
      }
+
+     .arrow-button {
+        position: absolute;
+        top: 0;
+        right: 0;
+        padding: 10px;
+    }
+    
+    
+    .arrow-button i {
+        font-size: 20px;
+    }

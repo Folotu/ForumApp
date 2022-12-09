@@ -32,11 +32,6 @@ def index():
         return render_template('index.html', posts=posts)
 
 
-
-
-
-
-
 @views.route('/post', methods=['GET','POST'])
 @login_required
 def Createpost():
@@ -60,7 +55,8 @@ def Createpost():
             title=title,
             description=description,
             category_id=category.id,
-            author_id=author_id
+            author_id=author_id,
+            number_of_votes = 0
         )
         db.session.add(post)
         db.session.commit()
@@ -98,7 +94,7 @@ def add_comment(post_id):
     user_id = current_user.id 
 
     # Create a new comment
-    comment = Comment(author_id=user_id, post_id=post_id, comment=comment_text)
+    comment = Comment(author_id=user_id, post_id=post_id, comment=comment_text, number_of_votes = 0)
 
     # Add the comment to the database
     db.session.add(comment)
@@ -123,9 +119,9 @@ def add_reply(comment_id):
     # Create a new reply
     if reply_parent_id != '': 
         reply_parent_id = int(reply_parent_id)
-        reply = Reply(author_id=user_id, reply=reply_text, replyparent_id=reply_parent_id)
+        reply = Reply(author_id=user_id, reply=reply_text, replyparent_id=reply_parent_id, number_of_votes = 0)
     else:
-        reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text)
+        reply = Reply(author_id=user_id, comment_id=comment_id, reply=reply_text, number_of_votes = 0)
 
     # Add the reply to the database
     db.session.add(reply)

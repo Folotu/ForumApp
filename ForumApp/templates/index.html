@@ -15,6 +15,9 @@
                   <h5 class="card-title">{{ post.title }}</h5>
                   <p class="card-text">{{ post.description }}</p>
                   <small class="card-foot">Posted by {{ post.author.username }} ({{post.created_at}})</small>
+                <div class="arrow-button">
+                    <i class=""> {{ post.number_of_votes }} Votes </i>
+                </div>
                 </div>
               </a>
             {% endfor %}
@@ -22,7 +25,8 @@
         </div>
       </div>
     </div>
-    
+       
+            
 {% endblock %}
     
 

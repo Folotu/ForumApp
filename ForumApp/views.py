@@ -85,6 +85,24 @@ def post(post_id):
     return render_template('post.html', post=post, comments=comments, replies=replies)
 
 
+@views.route('/post/<int:post_id>/vote/<string:action>/', methods=['POST'])
+@login_required
+def add_post_vote(post_id, action):
+    post = Post.query.get(post_id)
+    if not post:
+        abort(404)
+
+    if (action == 'add'):
+        post.number_of_votes += 1
+    elif (action == 'subtract'):
+        post.number_of_votes -= 1
+
+    # commit vote on the comment to the database
+    db.session.commit()
+
+    # Redirect the user to the post page
+    return jsonify({'votes': post.number_of_votes})
+
 
 
 @views.route('/post/<int:post_id>/add_comment', methods=['POST'])
@@ -106,10 +124,9 @@ def add_comment(post_id):
 
 @views.route('/comment/<int:comment_id>/vote/<string:action>/', methods=['POST'])
 @login_required
-def add_vote(comment_id, action):
+def add_comment_vote(comment_id, action):
     comment = Comment.query.get(comment_id)
-    post_id = comment.post_id
-
+    
     if (action == 'add'):
         comment.number_of_votes += 1
     elif (action == 'subtract'):

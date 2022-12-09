@@ -15,9 +15,15 @@
     
     
     <small class="card-foot"> Posted by {{ post.author.username }} </small>
-<div class="arrow-button">
-        <i class="fa fa-arrow-up">{{post.number_of_votes}}</i>
-        <i class="fa fa-arrow-down"></i>
+
+    <div class="arrow-button post">
+        <i class="fa fa-arrow-up post" data-postid = {{ post.id }}></i>
+            {% if post.number_of_votes >= 0 %}
+                <i class=""> {{ post.number_of_votes }} Upvotes </i>
+            {% elif post.number_of_votes < 0 %}
+                <i class=""> {{ post.number_of_votes }} Downvotes </i>
+            {% endif %}
+        <i class="fa fa-arrow-down post" data-postid = {{ post.id }}></i>
     </div>
     
 

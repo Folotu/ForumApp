@@ -14,7 +14,7 @@ from sqlalchemy import inspect
 from .models import Users, Role, Category, Post, Comment, Reply
 
 class Administrator(ModelView):
-	#@login_required
+	@login_required
 	def is_accessible(self):
 		return super().is_accessible()
 
@@ -24,12 +24,12 @@ class Administrator(ModelView):
 
 
 class MyAdminView(AdminIndexView):
-	# def is_accessible(self):
-	# 	print(current_user)
-	# 	return (current_user.is_active and
-	# 			current_user.is_authenticated and
-	# 			current_user.has_roles('superuser')
-	# 	)
+	def is_accessible(self):
+		print(current_user)
+		return (current_user.is_active and
+				current_user.is_authenticated and
+				current_user.has_roles('superuser')
+		)
 	@expose('/')
 	def index(self):
 		arg1 = 'Hello'

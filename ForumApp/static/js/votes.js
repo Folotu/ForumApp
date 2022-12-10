@@ -19,7 +19,9 @@
     var upvotePostElements = document.getElementsByClassName('fa fa-arrow-up post');
     var downvotePostElements = document.getElementsByClassName('fa fa-arrow-down post');
 
-
+    function delayedLog() {
+        console.log('This message is delayed by 2 seconds');
+    }
 
 
     if (myCookie) {
@@ -71,17 +73,22 @@
                             url: `/comment/${commentId}/vote/add`,
                             type: 'POST',
                             success: function(response) {
-                                // Update the display to show the updated vote count
+                                if (response.redirect) {
+                                    // Update the URL in the browser to the new location
+                                    window.location.href = response.redirect;
+                                }else {
+                                    // Update the display to show the updated vote count
+                                    setTimeout(delayedLog, 20000);
+                                    if(response.votes >= 0)
+                                    {
+                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
+                                    }else
+                                    {
+                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes');
+                                    }
 
-                                if(response.votes >= 0)
-                                {
-                                    $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
-                                }else
-                                {
-                                    $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes');
                                 }
-
-
+                                
                                 console.log("it updates")
                             }
                         });
@@ -113,8 +120,12 @@
                         url: `/comment/${commentId}/vote/subtract`,
                         type: 'POST',
                         success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
                             // Update the display to show the updated vote count
-            
+                            setTimeout(delayedLog, 2000);
                             if(response.votes >= 0)
                             {
                                 $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
@@ -160,8 +171,12 @@
                             url: `/post/${postId}/vote/add/`,
                             type: 'POST',
                             success: function(response) {
+                                if (response.redirect) {
+                                    // Update the URL in the browser to the new location
+                                    window.location.href = response.redirect;
+                                }
                                 // Update the display to show the updated vote count
-
+                                setTimeout(delayedLog, 2000);
                                 if(response.votes >= 0)
                                 {
                                     $(upvotePostElements[i]).next().text(response.votes + ' Upvotes');
@@ -201,6 +216,11 @@
                         url: `/post/${postId}/vote/subtract/`,
                         type: 'POST',
                         success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
                             // Update the display to show the updated vote count
 
                             if(response.votes >= 0)
@@ -258,6 +278,11 @@
                             url: `/reply/${replyId}/vote/add/`,
                             type: 'POST',
                             success: function(response) {
+                                if (response.redirect) {
+                                    // Update the URL in the browser to the new location
+                                    window.location.href = response.redirect;
+                                }
+                                setTimeout(delayedLog, 2000);
                                 // Update the display to show the updated vote count
 
                                 if(response.votes >= 0)
@@ -299,6 +324,11 @@
                         url: `/reply/${replyId}/vote/subtract/`,
                         type: 'POST',
                         success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
                             // Update the display to show the updated vote count
 
                             if(response.votes >= 0)
@@ -370,7 +400,12 @@
                             type: 'POST',
                             success: function(response) {
                                 // Update the display to show the updated vote count
-
+                                console.log(response)
+                                if (response.redirect) {
+                                    // Update the URL in the browser to the new location
+                                    window.location.href = response.redirect;
+                                }
+                                setTimeout(delayedLog, 2000);
                                 if(response.votes >= 0)
                                 {
                                     $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes');
@@ -378,7 +413,6 @@
                                 {
                                     $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes');
                                 }
-
 
                                 console.log("it updates")
                             }
@@ -411,6 +445,11 @@
                         type: 'POST',
                         success: function(response) {
                             // Update the display to show the updated vote count
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
 
                             if(response.votes >= 0)
                             {

@@ -10,8 +10,6 @@ from flask import Flask, render_template, request, redirect, url_for
 
 views = Blueprint('views', __name__)
 
-
-
 @views.route('/', methods=['GET','POST'])
 def index():
 
@@ -29,6 +27,10 @@ def index():
 
     else:
         posts = Post.query.all()
+        if (current_user.is_anonymous):
+            person = "Guest"
+        else:
+            person = current_user.username
         return render_template('index.html', posts=posts)
 
 
@@ -68,11 +70,6 @@ def Createpost():
         
         return render_template('createPost.html', user=current_user)
 
-
-
-
-
-
 @views.route('/post/<int:post_id>', methods=['GET'])
 def post(post_id):
     # Handle GET request for viewing a post
@@ -86,8 +83,10 @@ def post(post_id):
 
 
 @views.route('/post/<int:post_id>/vote/<string:action>/', methods=['POST'])
-@login_required
 def add_post_vote(post_id, action):
+    if (current_user.is_anonymous):
+    # Do something for anonymous users
+        return jsonify({'redirect': url_for('auth.login')})
     post = Post.query.get(post_id)
     if not post:
         abort(404)
@@ -123,8 +122,11 @@ def add_comment(post_id):
 
 
 @views.route('/comment/<int:comment_id>/vote/<string:action>/', methods=['POST'])
-@login_required
 def add_comment_vote(comment_id, action):
+    if (current_user.is_anonymous):
+    # Do something for anonymous users
+        return jsonify({'redirect': url_for('auth.login')})
+
     comment = Comment.query.get(comment_id)
     
     if (action == 'add'):
@@ -166,8 +168,12 @@ def add_reply(comment_id):
     return redirect(url_for('views.post', post_id=post_id))
 
 @views.route('/reply/<int:reply_id>/vote/<string:action>/', methods=['POST'])
-@login_required
+
 def add_reply_vote(reply_id, action):
+    if (current_user.is_anonymous):
+    # Do something for anonymous users
+        return jsonify({'redirect': url_for('auth.login')})
+
     reply = Reply.query.get(reply_id)
     
     if (action == 'add'):

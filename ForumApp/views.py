@@ -165,3 +165,18 @@ def add_reply(comment_id):
     # Redirect the user to the post page
     return redirect(url_for('views.post', post_id=post_id))
 
+@views.route('/reply/<int:reply_id>/vote/<string:action>/', methods=['POST'])
+@login_required
+def add_reply_vote(reply_id, action):
+    reply = Reply.query.get(reply_id)
+    
+    if (action == 'add'):
+        reply.number_of_votes += 1
+    elif (action == 'subtract'):
+        reply.number_of_votes -= 1
+
+    # commit vote on the comment to the database
+    db.session.commit()
+
+    return jsonify({'votes': reply.number_of_votes})
+

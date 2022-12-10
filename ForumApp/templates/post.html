@@ -34,14 +34,15 @@
             <div class="card-body">
                 <h5 class="card-title">{{ reply.author.username }}</h5>
                 <p class="card-text">{{ reply.reply }}</p>
-                <div class="arrow-button">
-                    <i class="fa fa-arrow-up" onclick="handleUpVote()"></i>
+
+                <div class="arrow-button nestreply">
+                    <i class="fa fa-arrow-up nestreply" data-nestreply={{reply.id}} ></i>
                     {% if reply.number_of_votes >= 0 %}
                         <i class=""> {{ reply.number_of_votes }} Upvotes </i>
                     {% elif reply.number_of_votes < 0 %}
                         <i class=""> {{ reply.number_of_votes }} Downvotes </i>
                     {% endif %}
-                        <i class="fa fa-arrow-down"></i>
+                        <i class="fa fa-arrow-down nestreply" data-nestreply={{reply.id}}></i>
                 </div>
 
                 {% if reply.replies %}
@@ -80,14 +81,15 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ reply.author.username }}</h5>
                             <p class="card-text">{{ reply.reply }}</p>
-                            <div class="arrow-button">
-                                <i class="fa fa-arrow-up" onclick="handleUpVote()"></i>
+
+                            <div class="arrow-button reply">
+                                <i class="fa fa-arrow-up reply" data-replyid = {{ reply.id }}></i>
                                 {% if reply.number_of_votes >= 0 %}
                                     <i class=""> {{ reply.number_of_votes }} Upvotes </i>
                                 {% elif reply.number_of_votes < 0 %}
                                     <i class=""> {{ reply.number_of_votes }} Downvotes </i>
                                 {% endif %}
-                                    <i class="fa fa-arrow-down"></i>
+                                <i class="fa fa-arrow-down reply" data-replyid = {{ reply.id }}></i>
                             </div>
 
                             {% if reply.replies %}

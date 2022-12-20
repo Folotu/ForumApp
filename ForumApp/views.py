@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, request, flash, jsonify, abort, re
 from flask_login import login_required, current_user
 from . import db, app
 import json
-# from flask_cors import CORS
 from .models import *
 from sqlalchemy import desc
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -81,9 +80,12 @@ def post(post_id):
     replies = Reply.query.all()
     if current_user.is_authenticated:
         specificPersonPostUpvote = Upvote.query.filter_by(post_id=post_id, author = current_user).first()
-        # specificPersonCommentUpvote = Upvote.query.filter_by(comment_id=post_id, author_id = current_user).all()
+        specificPersonCommentUpvote = []
+        for i in range(len(comments)):
+            specificPersonCommentUpvote.append(Upvote.query.filter_by(comment=comments[i], author = current_user).first())
+
         # specificPersonReplyUpvote = Upvote.query.filter_by(reply_id = , author_id = current_user).all()
-    return render_template('post.html', post=post, comments=comments, replies=replies, Upvotes = {'PostUpvote': specificPersonPostUpvote, })
+    return render_template('post.html', post=post, comments=comments, replies=replies, Upvotes = {'PostUpvote': specificPersonPostUpvote, 'CommsUpvote':specificPersonCommentUpvote, })
 
 @views.route('/post/<int:post_id>/vote/<string:action>/', methods=['POST'])
 def add_post_vote(post_id, action):
@@ -93,7 +95,6 @@ def add_post_vote(post_id, action):
     post = Post.query.get(post_id)
     if not post:
         abort(404)
-
     # Check if the user has already voted on this post
     upvote = Upvote.query.filter_by(author=current_user, post=post).first()
 
@@ -156,10 +157,32 @@ def add_comment_vote(comment_id, action):
 
     comment = Comment.query.get(comment_id)
     
-    if (action == 'add'):
-        comment.number_of_votes += 1
-    elif (action == 'subtract'):
-        comment.number_of_votes -= 1
+    # Check if the user has already voted on this comment
+    upvote = Upvote.query.filter_by(author=current_user, comment=comment).first()
+
+    if upvote:
+        # If the user has already voted, update the vote action and vote count accordingly
+        if upvote.act == 'ADD' and action == 'subtract':
+            comment.number_of_votes -= 2
+            upvote.act = 'MIN'
+        elif upvote.act == 'MIN' and action == 'add':
+            comment.number_of_votes += 2
+            upvote.act = 'ADD'
+        elif upvote.act == 'MIN' and action == 'unvote':
+                comment.number_of_votes += 1
+                db.session.delete(upvote)
+        elif upvote.act == 'ADD' and action == 'unvote':
+                comment.number_of_votes -= 1
+                db.session.delete(upvote)
+        
+    else:
+        # If the user has not voted yet, create a new vote
+        if action == 'add':
+            comment.number_of_votes += 1
+            Upvote(author=current_user, comment=comment, act='ADD')
+        elif action == 'subtract':
+            comment.number_of_votes -= 1
+            Upvote(author=current_user, comment=comment, act='MIN')
 
     # commit vote on the comment to the database
     db.session.commit()

@@ -142,20 +142,22 @@
         
         (function(i) 
         {
-            console.log(postVoteCounter)
             upvotePostElements[i].addEventListener("click", function() 
             {
-                console.log(postVoteCounter)
                 // Add the "active" class to the current element
-                upvotePostElements[i].className += " active";
-                console.log(upvotePostElements[i].className)
-                
-                var postId = $(this).data('postid');
-                console.log(postVoteCounter)
+                //upvotePostElements[i].className += " active";
+                upvotePostElements[i].classList.add("active");
+                console.log(upvotePostElements[i].style.backgroundColor)
+                if (upvotePostElements[i].style.backgroundColor == "rgb(204, 204, 204)" )
+                {
+                    upvotePostElements[i].style = "background-color: ''" 
+                    downvotePostElements[i].style = "background-color: ''" 
 
-                //Make an AJAX request to update the up vote count for the comment
+                    var postId = $(this).data('postid');
+
+                    //Make an AJAX request to unvote for post
                     $.ajax({
-                        url: `/post/${postId}/vote/add/`,
+                        url: `/post/${postId}/vote/unvote/`,
                         type: 'POST',
                         success: function(response) {
                             if (response.redirect) {
@@ -166,65 +168,132 @@
                             setTimeout(delayedLog, 2000);
                             if(response.votes >= 0)
                             {
-                                $(upvotePostElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvotePostElements[i]).next().text(response.votes + ' Upvotes ');
                             }else
                             {
-                                $(upvotePostElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvotePostElements[i]).next().text(response.votes + ' Downvotes ');
+                            }
+
+                            console.log("unvoted")
+                        }
+                    });
+                }
+                else
+                {
+                    upvotePostElements[i].style = "background-color: #ccc;";
+                    downvotePostElements[i].style = "background-color: ''";
+                    
+                    console.log(upvotePostElements[i].className)
+                    
+                    var postId = $(this).data('postid');
+
+                    //Make an AJAX request to update the up vote count for the comment
+                        $.ajax({
+                            url: `/post/${postId}/vote/add/`,
+                            type: 'POST',
+                            success: function(response) {
+                                if (response.redirect) {
+                                    // Update the URL in the browser to the new location
+                                    window.location.href = response.redirect;
+                                }
+                                // Update the display to show the updated vote count
+                                setTimeout(delayedLog, 2000);
+                                if(response.votes >= 0)
+                                {
+                                    $(upvotePostElements[i]).next().text(response.votes + ' Upvotes ');
+                                }else
+                                {
+                                    $(upvotePostElements[i]).next().text(response.votes + ' Downvotes ');
+                                }
+
+
+                                console.log("it updates")
+                            }
+                        });
+
+                }
+
+                    // Remove the "active" class from the current element
+                    //upvotePostElements[i].className = upvotePostElements[i].className.replace("active", "");
+                    upvotePostElements[i].classList.toggle("active");
+                
+            });
+        
+
+            downvotePostElements[i].addEventListener("click", function() 
+            {
+                //add active class
+                //upvotePostElements[i].className += " active";
+                downvotePostElements[i].classList.add("active");
+                
+                if (downvotePostElements[i].style.backgroundColor == "rgb(204, 204, 204)")
+                {
+                    downvotePostElements[i].style = "background-color: ''" 
+                    upvotePostElements[i].style = "background-color: ''" 
+
+                    var postId = $(this).data('postid');
+
+                    //Make an AJAX request to unvote for post
+                    $.ajax({
+                        url: `/post/${postId}/vote/unvote/`,
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            // Update the display to show the updated vote count
+                            setTimeout(delayedLog, 2000);
+                            if(response.votes >= 0)
+                            {
+                                $(upvotePostElements[i]).next().text(response.votes + ' Upvotes ');
+                            }else
+                            {
+                                $(upvotePostElements[i]).next().text(response.votes + ' Downvotes ');
+                            }
+
+                            console.log("unvoted")
+                        }
+                    });
+
+                }
+                else
+                {
+                    downvotePostElements[i].style = "background-color: #ccc;";
+                    upvotePostElements[i].style = "background-color: ''";
+                    
+                    console.log(upvotePostElements[i].className)
+                    
+                    var postId = $(this).data('postid');
+
+                    //Make an AJAX request to update the up vote count for the post
+                    $.ajax({
+                        url: `/post/${postId}/vote/subtract/`,
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
+                            // Update the display to show the updated vote count
+
+                            if(response.votes >= 0)
+                            {
+                                $(upvotePostElements[i]).next().text(response.votes + ' Upvotes ');
+                            }else
+                            {
+                                $(upvotePostElements[i]).next().text(response.votes + ' Downvotes ');
                             }
 
 
                             console.log("it updates")
                         }
                     });
-
-                    postVoteCounter++;
-                    document.cookie = "postVoteCounter=" + postVoteCounter;
-
-                    // Remove the "active" class from the current element
-                    upvotePostElements[i].className = upvotePostElements[i].className.replace("active", "");
-                
-            });
-
-            downvotePostElements[i].addEventListener("click", function() 
-            {
-                console.log(postVoteCounter)
-                //add active class
-                console.log(upvotePostElements[i].className)
-                upvotePostElements[i].className += " active";
-                console.log(upvotePostElements[i].className)
-                
-                var postId = $(this).data('postid');
-
-                //Make an AJAX request to update the up vote count for the post
-                $.ajax({
-                    url: `/post/${postId}/vote/subtract/`,
-                    type: 'POST',
-                    success: function(response) {
-                        if (response.redirect) {
-                            // Update the URL in the browser to the new location
-                            window.location.href = response.redirect;
-                        }
-                        setTimeout(delayedLog, 2000);
-                        // Update the display to show the updated vote count
-
-                        if(response.votes >= 0)
-                        {
-                            $(upvotePostElements[i]).next().text(response.votes + ' Upvotes');
-                        }else
-                        {
-                            $(upvotePostElements[i]).next().text(response.votes + ' Downvotes');
-                        }
-
-
-                        console.log("it updates")
-                    }
-                });
-                postVoteCounter--;
-                document.cookie = "postVoteCounter=" + postVoteCounter;
-
+            }
                 // Remove the "active" class from the current element
-                upvotePostElements[i].className = upvotePostElements[i].className.replace("active", "");
-            
+                //downvotePostElements[i].className = upvotePostElements[i].className.replace("active", "");
+                downvotePostElements[i].classList.toggle("active");
 
             });
 

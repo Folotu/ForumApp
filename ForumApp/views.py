@@ -79,45 +79,57 @@ def post(post_id):
         abort(404)
     comments = Comment.query.filter_by(post_id=post_id).all()
     replies = Reply.query.all()
-    return render_template('post.html', post=post, comments=comments, replies=replies)
-
+    if current_user.is_authenticated:
+        specificPersonPostUpvote = Upvote.query.filter_by(post_id=post_id, author = current_user).first()
+        # specificPersonCommentUpvote = Upvote.query.filter_by(comment_id=post_id, author_id = current_user).all()
+        # specificPersonReplyUpvote = Upvote.query.filter_by(reply_id = , author_id = current_user).all()
+    return render_template('post.html', post=post, comments=comments, replies=replies, Upvotes = {'PostUpvote': specificPersonPostUpvote, })
 
 @views.route('/post/<int:post_id>/vote/<string:action>/', methods=['POST'])
 def add_post_vote(post_id, action):
-    if (current_user.is_anonymous):
-    # Do something for anonymous users
+    if current_user.is_anonymous:
+        # Do something for anonymous users
         return jsonify({'redirect': url_for('auth.login')})
     post = Post.query.get(post_id)
     if not post:
         abort(404)
 
-    if (action == 'add'):
-        #check if upvote action exists from spec user
-        upvote = Upvote.query.filter_by(author = current_user, post = post, act = 'ADD').first()
-        if not upvote:
-            post.number_of_votes += 1
-            Upvote(author = current_user, post = post, act = 'ADD')
-        else:
-            post.number_of_votes -= 1
-            db.session.delete(upvote)
+    # Check if the user has already voted on this post
+    upvote = Upvote.query.filter_by(author=current_user, post=post).first()
 
-    elif (action == 'subtract'):
-        #check if upvote action exists from spec user
-        upvote = Upvote.query.filter_by(author = current_user, post = post, act = 'MIN').first()
-        if not upvote:
-            post.number_of_votes -= 1
-            Upvote(author = current_user, post = post, act = 'MIN')
-        else:
+    if upvote:
+        # If the user has already voted, update the vote action and vote count accordingly
+        if upvote.act == 'ADD' and action == 'subtract':
+            post.number_of_votes -= 2
+            upvote.act = 'MIN'
+        elif upvote.act == 'MIN' and action == 'add':
+            post.number_of_votes += 2
+            upvote.act = 'ADD'
+        #The reason for adding or subtracting 2 from the vote count instead of just 1 
+        # is to cancel out the previous vote. For example, if the user had previously upvoted 
+        # the post and is now trying to downvote it, the vote count needs to be decreased 
+        # by 2 (1 for the upvote and 1 for the downvote) to cancel out the previous vote.
+        elif upvote.act == 'MIN' and action == 'unvote':
+                post.number_of_votes += 1
+                db.session.delete(upvote)
+        elif upvote.act == 'ADD' and action == 'unvote':
+                post.number_of_votes -= 1
+                db.session.delete(upvote)
+        
+    else:
+        # If the user has not voted yet, create a new vote
+        if action == 'add':
             post.number_of_votes += 1
-            db.session.delete(upvote)
+            Upvote(author=current_user, post=post, act='ADD')
+        elif action == 'subtract':
+            post.number_of_votes -= 1
+            Upvote(author=current_user, post=post, act='MIN')
 
-    # commit vote on the comment to the database
+    # Commit the vote to the database
     db.session.commit()
 
     # Redirect the user to the post page
     return jsonify({'votes': post.number_of_votes})
-
-
 
 @views.route('/post/<int:post_id>/add_comment', methods=['POST'])
 @login_required

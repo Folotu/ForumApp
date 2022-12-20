@@ -6,7 +6,7 @@
 
 {% block body %}
 
-<!-- Define the function that will handle the recursion -->
+
 
 <div class="col-md-auto col-lg-auto col-sm-auto w-100">
     <h1>{{ post.title }}</h1>
@@ -14,20 +14,39 @@
     <h5>{{ post.description }} </h5>
     
     
-    <small class="card-foot"> Posted by {{ post.author.username }} </small>
+    <small class="card-foot"> Posted by {{ post.author.username }}</small>
 
     <div class="arrow-button post">
-        <i class="fa fa-arrow-up post" data-postid = {{ post.id }}></i>
-            {% if post.number_of_votes >= 0 %}
-                <i class=""> {{ post.number_of_votes }} Upvotes </i>
-            {% elif post.number_of_votes < 0 %}
-                <i class=""> {{ post.number_of_votes }} Downvotes </i>
-            {% endif %}
-        <i class="fa fa-arrow-down post" data-postid = {{ post.id }}></i>
+        {% if Upvotes.PostUpvote.act == 'MIN' %}
+            <i class="fa fa-arrow-up post" data-postid = {{ post.id }} ></i>
+                {% if post.number_of_votes >= 0 %}
+                    <i class="" > {{ post.number_of_votes }} Upvotes </i>
+                {% elif post.number_of_votes < 0 %}
+                    <i class=""> {{ post.number_of_votes }} Downvotes </i>
+                {% endif %}
+            <i class="fa fa-arrow-down post" style="background-color: #ccc;" data-postid = {{ post.id }}></i>
+        {% elif Upvotes.PostUpvote.act == 'ADD' %}
+            <i class="fa fa-arrow-up post" style="background-color: #ccc;" data-postid = {{ post.id }} ></i>
+                {% if post.number_of_votes >= 0 %}
+                    <i class="" > {{ post.number_of_votes }} Upvotes </i>
+                {% elif post.number_of_votes < 0 %}
+                    <i class=""> {{ post.number_of_votes }} Downvotes </i>
+                {% endif %}
+            <i class="fa fa-arrow-down post" data-postid = {{ post.id }}></i>
+        {% else %}
+            <i class="fa fa-arrow-up post" data-postid = {{ post.id }} ></i>
+                {% if post.number_of_votes >= 0 %}
+                    <i class="" > {{ post.number_of_votes }} Upvotes </i>
+                {% elif post.number_of_votes < 0 %}
+                    <i class=""> {{ post.number_of_votes }} Downvotes </i>
+                {% endif %}
+            <i class="fa fa-arrow-down post" data-postid = {{ post.id }}></i>
+
+        {% endif %}
     </div>
     
 
-
+<!-- Define the function that will handle the recursion -->
 {% macro loop_replies(replies, comment, repparentid) %}
     {% for reply in replies %}
         <div class="card mb-12 col-md-auto col-lg-auto ">

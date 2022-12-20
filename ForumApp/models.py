@@ -97,3 +97,14 @@ class Reply(db.Model):
     def __str__(self):
         return str(self.author) + "\n" + self.reply
 
+class Upvote(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    author = db.relationship(Users, backref=backref("Upvote", cascade="all, delete"))
+    post_id = db.Column(db.Integer, db.ForeignKey('post.id'))
+    post = db.relationship(Post, backref=db.backref("post", lazy='dynamic'))
+    comment_id = db.Column(db.Integer, db.ForeignKey('comment.id'))
+    comment = db.relationship(Comment, backref=db.backref("comments", lazy='dynamic'))
+    reply_id = db.Column(db.Integer, db.ForeignKey('reply.id'))
+    reply = db.relationship(Reply, backref=db.backref('replys',lazy='dynamic'))
+    act = db.Column(db.String(10000))

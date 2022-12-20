@@ -92,9 +92,24 @@ def add_post_vote(post_id, action):
         abort(404)
 
     if (action == 'add'):
-        post.number_of_votes += 1
+        #check if upvote action exists from spec user
+        upvote = Upvote.query.filter_by(author = current_user, post = post, act = 'ADD').first()
+        if not upvote:
+            post.number_of_votes += 1
+            Upvote(author = current_user, post = post, act = 'ADD')
+        else:
+            post.number_of_votes -= 1
+            db.session.delete(upvote)
+
     elif (action == 'subtract'):
-        post.number_of_votes -= 1
+        #check if upvote action exists from spec user
+        upvote = Upvote.query.filter_by(author = current_user, post = post, act = 'MIN').first()
+        if not upvote:
+            post.number_of_votes -= 1
+            Upvote(author = current_user, post = post, act = 'MIN')
+        else:
+            post.number_of_votes += 1
+            db.session.delete(upvote)
 
     # commit vote on the comment to the database
     db.session.commit()

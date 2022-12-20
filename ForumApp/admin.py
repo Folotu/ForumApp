@@ -11,7 +11,7 @@ from flask_login import login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash
 from sqlalchemy import inspect
 
-from .models import Users, Role, Category, Post, Comment, Reply
+from .models import Users, Role, Category, Post, Comment, Reply, Upvote
 
 class Administrator(ModelView):
 	@login_required
@@ -48,6 +48,7 @@ def appnamey(Daname):
 	admin.add_view(Administrator(Post, db.session))
 	admin.add_view(Administrator(Comment, db.session))
 	admin.add_view(Administrator(Reply, db.session))
+	admin.add_view(Administrator(Upvote, db.session))
 
 
 

@@ -69,6 +69,17 @@ def Createpost():
         
         return render_template('createPost.html', user=current_user)
 
+def replyHelper(repliesLS, Repdict):
+    for i in repliesLS:
+        print(i)
+        Repdict.update({i: Upvote.query.filter_by(reply_id=i.id, author = current_user).first()})
+        if(i.replies):
+            replyHelper(i.replies, Repdict)
+    
+    return Repdict
+
+
+
 @views.route('/post/<int:post_id>', methods=['GET'])
 def post(post_id):
     # Handle GET request for viewing a post
@@ -82,7 +93,6 @@ def post(post_id):
         specificPersonPostUpvote = Upvote.query.filter_by(post_id=post_id, author = current_user).first()
         specificPersonCommentUpvote = []
         specificPersonReplyUpvoteDict = {}
-        specificPersonRepliesUpvote = []
         for i in range(len(comments)):
             specificPersonCommentUpvote.append(Upvote.query.filter_by(comment=comments[i], author = current_user).first())
             for k in range(len(replies)):
@@ -90,10 +100,11 @@ def post(post_id):
                     if (comments[i].Reply[m] == replies[k]):
                         specificPersonReplyUpvoteDict.update({replies[k]: Upvote.query.filter_by(reply_id=replies[k].id, author = current_user).first()})
                         if (replies[k].replies):
-                            print("recurse")
-        print(specificPersonReplyUpvoteDict)
-        print(specificPersonCommentUpvote)
-        
+                            specificPersonReplyUpvoteDict = replyHelper(replies[k].replies, specificPersonReplyUpvoteDict)
+    else:
+        specificPersonPostUpvote = []
+        specificPersonCommentUpvote = []
+        specificPersonReplyUpvoteDict = {}
     return render_template('post.html', post=post, comments=comments, replies=replies, 
                             Upvotes = {'PostUpvote': specificPersonPostUpvote, 
                                         'CommsUpvote':specificPersonCommentUpvote, 

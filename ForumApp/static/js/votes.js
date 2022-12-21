@@ -488,19 +488,6 @@
     }
 
     //nested reply functionality 
-
-    var NestReplyCookie = document.cookie.split(";").find(function(cookie) {
-        return cookie.startsWith("NestreplyVoteCounter=");
-      });
-
-
-      if (NestReplyCookie)
-      {
-          var NestreplyVoteCounter = parseInt(NestReplyCookie.split("=")[1]);
-      }
-      else{
-          var NestreplyVoteCounter = 0;
-      }
     
     var upvoteNestReplyElements = document.getElementsByClassName('fa fa-arrow-up nestreply');
     var downvoteNestReplyElements = document.getElementsByClassName('fa fa-arrow-down nestreply');
@@ -510,22 +497,21 @@
     {
         (function(i) 
         {
-            console.log(NestreplyVoteCounter)
             upvoteNestReplyElements[i].addEventListener("click", function() 
             {
-                console.log(NestreplyVoteCounter)
-                if (NestreplyVoteCounter % 2 == 0) 
+                upvoteNestReplyElements[i].classList.add("active");
+                console.log(upvoteNestReplyElements[i].style.backgroundColor)
+                if (upvoteNestReplyElements[i].style.backgroundColor == "rgb(204, 204, 204)") 
                 {
                     // Add the "active" class to the current element
-                    upvoteNestReplyElements[i].className += " active";
-                    console.log(upvoteNestReplyElements[i].className)
+                    upvoteNestReplyElements[i].style = "background-color: ''" 
+                    downvoteNestReplyElements[i].style = "background-color: ''" 
                    
                    var nestreplyId = $(this).data('nestreply');
-                   console.log(NestreplyVoteCounter)
 
                     //Make an AJAX request to update the up vote count for the comment
                         $.ajax({
-                            url: `/reply/${nestreplyId}/vote/add/`,
+                            url: `/reply/${nestreplyId}/vote/unvote/`,
                             type: 'POST',
                             success: function(response) {
                                 // Update the display to show the updated vote count
@@ -543,31 +529,91 @@
                                     $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes ');
                                 }
 
-                                console.log("it updates")
+                                console.log("nestedreply unvoted")
                             }
                         });
-
-                        NestreplyVoteCounter++;
-                        document.cookie = "NestreplyVoteCounter=" + NestreplyVoteCounter;
-
-                        // Remove the "active" class from the current element
-                        upvoteNestReplyElements[i].className = upvoteNestReplyElements[i].className.replace("active", "");
                         
+                }
+                else{
+
+                    upvoteNestReplyElements[i].style = "background-color: #ccc;";
+                    downvoteNestReplyElements[i].style = "background-color: ''";
+
+                    var nestreplyId = $(this).data('nestreply');
+
+                    $.ajax({
+                        url: `/reply/${nestreplyId}/vote/add/`,
+                        type: 'POST',
+                        success: function(response) {
+                            // Update the display to show the updated vote count
+                            console.log(response)
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
+                            if(response.votes >= 0)
+                            {
+                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes ');
+                            }else
+                            {
+                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes ');
+                            }
+
+                            console.log("it updates")
+                        }
+                    });
+
+                    upvoteNestReplyElements[i].classList.toggle("active");
+
                 }
 
             });
 
             downvoteNestReplyElements[i].addEventListener("click", function() 
             {
-                console.log(NestreplyVoteCounter)
-                if (NestreplyVoteCounter % 2 != 0) {
+                downvoteNestReplyElements[i].classList.add("active");
+
+                if (downvoteNestReplyElements[i].style.backgroundColor == "rgb(204, 204, 204)") {
                     //add active class
-                    console.log(downvoteNestReplyElements[i].className)
-                    downvoteNestReplyElements[i].className += " active";
-                    console.log(downvoteNestReplyElements[i].className)
+                    downvoteNestReplyElements[i].style = "background-color: ''" 
+                    upvoteNestReplyElements[i].style = "background-color: ''" 
                     
                     var nestreplyId = $(this).data('nestreply');
-   
+
+                    //Make an AJAX request to update the up vote count for the post
+                    $.ajax({
+                        url: `/reply/${nestreplyId}/vote/unvote/`,
+                        type: 'POST',
+                        success: function(response) {
+                            // Update the display to show the updated vote count
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
+
+                            if(response.votes >= 0)
+                            {
+                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes ');
+                            }else
+                            {
+                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes ');
+                            }
+
+
+                            console.log("nestedreply unvoted")
+                        }
+                    });
+                } 
+
+                else
+                {
+                    downvoteNestReplyElements[i].style = "background-color: #ccc;";
+                    upvoteNestReplyElements[i].style = "background-color: ''";
+
+                    var nestreplyId = $(this).data('nestreply');
+
                     //Make an AJAX request to update the up vote count for the post
                     $.ajax({
                         url: `/reply/${nestreplyId}/vote/subtract/`,
@@ -592,12 +638,11 @@
                             console.log("it updates")
                         }
                     });
-                    NestreplyVoteCounter--;
-                    document.cookie = "NestreplyVoteCounter=" + NestreplyVoteCounter;
 
                     // Remove the "active" class from the current element
-                    downvoteNestReplyElements[i].className = downvoteNestReplyElements[i].className.replace("active", "");
-                } 
+                    downvoteNestReplyElements[i].classList.toggle("active");
+
+                }
 
             });
 

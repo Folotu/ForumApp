@@ -40,10 +40,10 @@
                                     setTimeout(delayedLog, 20000);
                                     if(response.votes >= 0)
                                     {
-                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
+                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes ');
                                     }else
                                     {
-                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes');
+                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes ');
                                     }
 
                                 }
@@ -72,10 +72,10 @@
                                     setTimeout(delayedLog, 20000);
                                     if(response.votes >= 0)
                                     {
-                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
+                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes ');
                                     }else
                                     {
-                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes');
+                                        $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes ');
                                     }
 
                                 }
@@ -115,9 +115,9 @@
                             setTimeout(delayedLog, 2000);
                             if(response.votes >= 0)
                             {
-                                $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes ');
                             }else{
-                                $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes ');
                             }
 
                             console.log("unvoted")
@@ -146,9 +146,9 @@
                             setTimeout(delayedLog, 2000);
                             if(response.votes >= 0)
                             {
-                                $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvoteCommentElements[i]).next().text(response.votes + ' Upvotes ');
                             }else{
-                                $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvoteCommentElements[i]).next().text(response.votes + ' Downvotes ');
                             }
                         }
                     });
@@ -363,10 +363,10 @@
 
                                 if(response.votes >= 0)
                                 {
-                                    $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes');
+                                    $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes ');
                                 }else
                                 {
-                                    $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
+                                    $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes ');
                                 }
 
                                 console.log("reply unvoted")
@@ -394,10 +394,10 @@
 
                             if(response.votes >= 0)
                             {
-                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes ');
                             }else
                             {
-                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes ');
                             }
 
 
@@ -436,10 +436,10 @@
 
                             if(response.votes >= 0)
                             {
-                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes ');
                             }else
                             {
-                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes ');
                             }
 
 
@@ -468,10 +468,10 @@
 
                             if(response.votes >= 0)
                             {
-                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes ');
                             }else
                             {
-                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes ');
                             }
 
                         }
@@ -537,10 +537,10 @@
                                 setTimeout(delayedLog, 2000);
                                 if(response.votes >= 0)
                                 {
-                                    $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes');
+                                    $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes ');
                                 }else
                                 {
-                                    $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes');
+                                    $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes ');
                                 }
 
                                 console.log("it updates")
@@ -582,10 +582,10 @@
 
                             if(response.votes >= 0)
                             {
-                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes');
+                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Upvotes ');
                             }else
                             {
-                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes');
+                                $(upvoteNestReplyElements[i]).next().text(response.votes + ' Downvotes ');
                             }
 
 

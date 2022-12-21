@@ -81,22 +81,23 @@ def post(post_id):
     if current_user.is_authenticated:
         specificPersonPostUpvote = Upvote.query.filter_by(post_id=post_id, author = current_user).first()
         specificPersonCommentUpvote = []
-        specificPersonReplyUpvote = []
+        specificPersonReplyUpvoteDict = {}
         specificPersonRepliesUpvote = []
         for i in range(len(comments)):
             specificPersonCommentUpvote.append(Upvote.query.filter_by(comment=comments[i], author = current_user).first())
             for k in range(len(replies)):
                 for m in range(len(comments[i].Reply)):
                     if (comments[i].Reply[m] == replies[k]):
-                        specificPersonReplyUpvote.append(Upvote.query.filter_by(reply_id=replies[k].id, author = current_user).first())
+                        specificPersonReplyUpvoteDict.update({replies[k]: Upvote.query.filter_by(reply_id=replies[k].id, author = current_user).first()})
                         if (replies[k].replies):
                             print("recurse")
-        print(specificPersonReplyUpvote)
+        print(specificPersonReplyUpvoteDict)
+        print(specificPersonCommentUpvote)
         
     return render_template('post.html', post=post, comments=comments, replies=replies, 
                             Upvotes = {'PostUpvote': specificPersonPostUpvote, 
                                         'CommsUpvote':specificPersonCommentUpvote, 
-                                        'ReplyUpvote': specificPersonReplyUpvote, })
+                                        'DictRepVote': specificPersonReplyUpvoteDict, })
 
 @views.route('/post/<int:post_id>/vote/<string:action>/', methods=['POST'])
 def add_post_vote(post_id, action):

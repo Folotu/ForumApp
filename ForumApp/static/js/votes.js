@@ -1,9 +1,4 @@
 
-    var ReplyCookie = document.cookie.split(";").find(function(cookie) {
-        return cookie.startsWith("replyVoteCounter=");
-      });
-
-    
     var upvoteCommentElements = document.getElementsByClassName('fa fa-arrow-up comment');
     var downvoteCommentElements = document.getElementsByClassName('fa fa-arrow-down comment');
     
@@ -12,14 +7,6 @@
 
     function delayedLog() {
         console.log('This message is delayed by 2 seconds');
-    }
-
-    if (ReplyCookie)
-    {
-        var replyVoteCounter = parseInt(ReplyCookie.split("=")[1]);
-    }
-    else{
-        var replyVoteCounter = 0;
     }
 
     // Loop through the elements
@@ -342,7 +329,6 @@
 
     // reply element functionality 
     
-    
     var upvoteReplyElements = document.getElementsByClassName('fa fa-arrow-up reply');
     var downvoteReplyElements = document.getElementsByClassName('fa fa-arrow-down reply');
 
@@ -351,22 +337,21 @@
     {
         (function(i) 
         {
-            console.log(replyVoteCounter)
             upvoteReplyElements[i].addEventListener("click", function() 
             {
-                console.log(replyVoteCounter)
-                if (replyVoteCounter % 2 == 0) 
+                upvoteReplyElements[i].classList.add("active");
+                console.log(upvoteReplyElements[i].style.backgroundColor)
+                if (upvoteReplyElements[i].style.backgroundColor == "rgb(204, 204, 204)") 
                 {
                     // Add the "active" class to the current element
-                    upvoteReplyElements[i].className += " active";
-                    console.log(upvoteReplyElements[i].className)
+                    upvoteReplyElements[i].style = "background-color: ''" 
+                    downvoteReplyElements[i].style = "background-color: ''" 
                    
                    var replyId = $(this).data('replyid');
-                   console.log(replyVoteCounter)
 
                     //Make an AJAX request to update the up vote count for the comment
                         $.ajax({
-                            url: `/reply/${replyId}/vote/add/`,
+                            url: `/reply/${replyId}/vote/unvote/`,
                             type: 'POST',
                             success: function(response) {
                                 if (response.redirect) {
@@ -384,35 +369,20 @@
                                     $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
                                 }
 
-
-                                console.log("it updates")
+                                console.log("reply unvoted")
                             }
                         });
-
-                        replyVoteCounter++;
-                        document.cookie = "replyVoteCounter=" + replyVoteCounter;
-
-                        // Remove the "active" class from the current element
-                        upvoteReplyElements[i].className = upvoteReplyElements[i].className.replace("active", "");
-                        
+          
                 }
+                else
+                {
+                    upvoteReplyElements[i].style = "background-color: #ccc;";
+                    downvoteReplyElements[i].style = "background-color: ''";
 
-            });
-
-            downvoteReplyElements[i].addEventListener("click", function() 
-            {
-                console.log(replyVoteCounter)
-                if (replyVoteCounter % 2 != 0) {
-                    //add active class
-                    console.log(downvoteReplyElements[i].className)
-                    downvoteReplyElements[i].className += " active";
-                    console.log(downvoteReplyElements[i].className)
-                    
                     var replyId = $(this).data('replyid');
-   
-                    //Make an AJAX request to update the up vote count for the post
+
                     $.ajax({
-                        url: `/reply/${replyId}/vote/subtract/`,
+                        url: `/reply/${replyId}/vote/add/`,
                         type: 'POST',
                         success: function(response) {
                             if (response.redirect) {
@@ -434,20 +404,88 @@
                             console.log("it updates")
                         }
                     });
-                    replyVoteCounter--;
-                    document.cookie = "replyVoteCounter=" + replyVoteCounter;
+
+
+                    upvoteReplyElements[i].classList.toggle("active");
+                }
+
+            });
+
+            downvoteReplyElements[i].addEventListener("click", function() 
+            {
+                downvoteReplyElements[i].classList.add("active");
+                
+                if (downvoteReplyElements[i].style.backgroundColor == "rgb(204, 204, 204)") {
+                    //add active class
+                    downvoteReplyElements[i].style = "background-color: ''" 
+                    upvoteReplyElements[i].style = "background-color: ''" 
+                    
+                    var replyId = $(this).data('replyid');
+                    
+                    //Make an AJAX request to update the up vote count for the post
+                    $.ajax({
+                        url: `/reply/${replyId}/vote/unvote/`,
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
+                            // Update the display to show the updated vote count
+
+                            if(response.votes >= 0)
+                            {
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes');
+                            }else
+                            {
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
+                            }
+
+
+                            console.log("reply unvoted")
+                        }
+                    });    
+                } 
+                else
+                {
+                    downvoteReplyElements[i].style = "background-color: #ccc;";
+                    upvoteReplyElements[i].style = "background-color: ''";
+
+                    var replyId = $(this).data('replyid');
+
+                    //Make an AJAX request to update the up vote count for the post
+                    $.ajax({
+                        url: `/reply/${replyId}/vote/subtract/`,
+                        type: 'POST',
+                        success: function(response) {
+                            if (response.redirect) {
+                                // Update the URL in the browser to the new location
+                                window.location.href = response.redirect;
+                            }
+                            setTimeout(delayedLog, 2000);
+                            // Update the display to show the updated vote count
+
+                            if(response.votes >= 0)
+                            {
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Upvotes');
+                            }else
+                            {
+                                $(upvoteReplyElements[i]).next().text(response.votes + ' Downvotes');
+                            }
+
+                        }
+                    });
 
                     // Remove the "active" class from the current element
-                    downvoteReplyElements[i].className = upvoteReplyElements[i].className.replace("active", "");
-                } 
+                    downvoteReplyElements[i].classList.toggle("active");
+                }
 
             });
 
         })(i) 
 
     }
-
-
 
     //nested reply functionality 
 

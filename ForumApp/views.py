@@ -81,11 +81,22 @@ def post(post_id):
     if current_user.is_authenticated:
         specificPersonPostUpvote = Upvote.query.filter_by(post_id=post_id, author = current_user).first()
         specificPersonCommentUpvote = []
+        specificPersonReplyUpvote = []
+        specificPersonRepliesUpvote = []
         for i in range(len(comments)):
             specificPersonCommentUpvote.append(Upvote.query.filter_by(comment=comments[i], author = current_user).first())
-
-        # specificPersonReplyUpvote = Upvote.query.filter_by(reply_id = , author_id = current_user).all()
-    return render_template('post.html', post=post, comments=comments, replies=replies, Upvotes = {'PostUpvote': specificPersonPostUpvote, 'CommsUpvote':specificPersonCommentUpvote, })
+            for k in range(len(replies)):
+                for m in range(len(comments[i].Reply)):
+                    if (comments[i].Reply[m] == replies[k]):
+                        specificPersonReplyUpvote.append(Upvote.query.filter_by(reply_id=replies[k].id, author = current_user).first())
+                        if (replies[k].replies):
+                            print("recurse")
+        print(specificPersonReplyUpvote)
+        
+    return render_template('post.html', post=post, comments=comments, replies=replies, 
+                            Upvotes = {'PostUpvote': specificPersonPostUpvote, 
+                                        'CommsUpvote':specificPersonCommentUpvote, 
+                                        'ReplyUpvote': specificPersonReplyUpvote, })
 
 @views.route('/post/<int:post_id>/vote/<string:action>/', methods=['POST'])
 def add_post_vote(post_id, action):
@@ -218,18 +229,39 @@ def add_reply(comment_id):
     return redirect(url_for('views.post', post_id=post_id))
 
 @views.route('/reply/<int:reply_id>/vote/<string:action>/', methods=['POST'])
-
 def add_reply_vote(reply_id, action):
     if (current_user.is_anonymous):
     # Do something for anonymous users
         return jsonify({'redirect': url_for('auth.login')})
 
     reply = Reply.query.get(reply_id)
-    
-    if (action == 'add'):
-        reply.number_of_votes += 1
-    elif (action == 'subtract'):
-        reply.number_of_votes -= 1
+
+    # Check if the user has already voted on this reply
+    upvote = Upvote.query.filter_by(author=current_user, reply=reply).first()
+
+    if upvote:
+        # If the user has already voted, update the vote action and vote count accordingly
+        if upvote.act == 'ADD' and action == 'subtract':
+            reply.number_of_votes -= 2
+            upvote.act = 'MIN'
+        elif upvote.act == 'MIN' and action == 'add':
+            reply.number_of_votes += 2
+            upvote.act = 'ADD'
+        elif upvote.act == 'MIN' and action == 'unvote':
+                reply.number_of_votes += 1
+                db.session.delete(upvote)
+        elif upvote.act == 'ADD' and action == 'unvote':
+                reply.number_of_votes -= 1
+                db.session.delete(upvote)
+
+    else:
+        # If the user has not voted yet, create a new vote
+        if action == 'add':
+            reply.number_of_votes += 1
+            Upvote(author=current_user, reply=reply, act='ADD')
+        elif action == 'subtract':
+            reply.number_of_votes -= 1
+            Upvote(author=current_user, reply=reply, act='MIN')
 
     # commit vote on the comment to the database
     db.session.commit()

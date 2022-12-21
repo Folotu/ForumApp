@@ -95,19 +95,39 @@
                 <h5 class="card-title">{{ comment.author.username }}</h5>
                 <p class="card-text">{{ comment.comment }}</p>
                 {% for reply in comment.Reply %}
+                    {% set inner_loop = loop %}
+                    {% set Replyls = Upvotes.ReplyUpvote %}
                     <div class="card mb-12 col-md-auto col-lg-auto ">
                         <div class="card-body">
                             <h5 class="card-title">{{ reply.author.username }}</h5>
                             <p class="card-text">{{ reply.reply }}</p>
 
                             <div class="arrow-button reply">
-                                <i class="fa fa-arrow-up reply" data-replyid = {{ reply.id }}></i>
-                                {% if reply.number_of_votes >= 0 %}
-                                    <i class=""> {{ reply.number_of_votes }} Upvotes </i>
-                                {% elif reply.number_of_votes < 0 %}
-                                    <i class=""> {{ reply.number_of_votes }} Downvotes </i>
+                                {% if Replyls[inner_loop.index0].act == 'MIN' %}
+                                    <i class="fa fa-arrow-up reply" data-replyid = {{ reply.id }}></i>
+                                    {% if reply.number_of_votes >= 0 %}
+                                        <i class=""> {{ reply.number_of_votes }} Upvotes </i>
+                                    {% elif reply.number_of_votes < 0 %}
+                                        <i class=""> {{ reply.number_of_votes }} Downvotes </i>
+                                    {% endif %}
+                                    <i class="fa fa-arrow-down reply" style="background-color: #ccc;" data-replyid = {{ reply.id }}></i>
+                                {% elif Replyls[inner_loop.index0].act == 'ADD' %}
+                                    <i class="fa fa-arrow-up reply" style="background-color: #ccc;" data-replyid = {{ reply.id }}></i>
+                                    {% if reply.number_of_votes >= 0 %}
+                                        <i class=""> {{ reply.number_of_votes }} Upvotes </i>
+                                    {% elif reply.number_of_votes < 0 %}
+                                        <i class=""> {{ reply.number_of_votes }} Downvotes </i>
+                                    {% endif %}
+                                    <i class="fa fa-arrow-down reply"  data-replyid = {{ reply.id }}></i>
+                                {% else %}
+                                    <i class="fa fa-arrow-up reply" data-replyid = {{ reply.id }}></i>
+                                    {% if reply.number_of_votes >= 0 %}
+                                        <i class=""> {{ reply.number_of_votes }} Upvotes </i>
+                                    {% elif reply.number_of_votes < 0 %}
+                                        <i class=""> {{ reply.number_of_votes }} Downvotes </i>
+                                    {% endif %}
+                                    <i class="fa fa-arrow-down reply"  data-replyid = {{ reply.id }}></i>
                                 {% endif %}
-                                <i class="fa fa-arrow-down reply" data-replyid = {{ reply.id }}></i>
                             </div>
 
                             {% if reply.replies %}
